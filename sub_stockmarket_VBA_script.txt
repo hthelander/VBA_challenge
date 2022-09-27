@@ -1,0 +1,150 @@
+Sub stockmarket()
+Dim ws As Worksheet
+
+For Each ws In Worksheets
+
+
+ws.Range("I1") = "Ticker"
+ws.Range("J1") = "Yearly Change"
+ws.Range("K1") = "Percent Change"
+ws.Range("L1") = "Total Stock Volume"
+
+
+Dim ticker As String
+
+Dim stock_open As Double
+Dim stock_open_row As Long
+stock_open_row = 2
+
+
+Dim stock_close As Double
+stock_close = 0
+
+
+Dim yearly_change As Double
+
+Dim stock_vol As Double
+stock_vol = 0
+
+Dim Yearly_Table_Row As Long
+Yearly_Table_Row = 2
+
+Dim lastrow As Long
+lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+
+  For i = 2 To lastrow
+   
+  
+    If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+    
+      ticker = ws.Cells(i, 1).Value
+      
+      stock_vol = stock_vol + ws.Cells(i, 7).Value
+      
+      stock_open = ws.Cells(stock_open_row, 3).Value
+      
+      stock_close = stock_close + ws.Cells(i, 6).Value
+                        
+      ws.Range("I" & Yearly_Table_Row).Value = ticker
+      
+      ws.Range("L" & Yearly_Table_Row).Value = stock_vol
+      
+      
+      yearly_change = stock_close - stock_open
+      
+      ws.Range("J" & Yearly_Table_Row).Value = yearly_change
+      
+        If ws.Cells(Yearly_Table_Row, 10).Value >= 0 Then
+        
+        ws.Cells(Yearly_Table_Row, 10).Interior.ColorIndex = 4
+        
+        Else: ws.Cells(Yearly_Table_Row, 10).Interior.ColorIndex = 3
+        
+        End If
+        
+        
+      
+      ws.Range("K" & Yearly_Table_Row).Value = FormatPercent(yearly_change / stock_open)
+      
+      
+      Yearly_Table_Row = Yearly_Table_Row + 1
+      
+      stock_vol = 0
+         
+      stock_close = 0
+      
+      yearly_change = 0
+      
+      stock_open_row = i + 1
+      
+    Else
+      stock_vol = stock_vol + ws.Cells(i, 7).Value
+         
+      
+  End If
+  
+  
+  
+  Next i
+  
+    
+  ws.Range("O2") = "Greatest % Increase"
+  ws.Range("O3") = "Greatest % Decrease"
+  ws.Range("O4") = "Greatest Total Volume"
+  ws.Range("P1") = "Ticker"
+  ws.Range("Q1") = "Value"
+  
+  
+   Dim tick As String
+   
+ 
+   Dim lrow As Long
+   lrow = ws.Cells(Rows.Count, 11).End(xlUp).Row
+   
+   
+      For j = 2 To lrow
+      
+      
+      
+     
+          If ws.Cells(j, 11).Value = Application.WorksheetFunction.Max(ws.Range("K:K")) Then
+          
+            tick = ws.Cells(j, 9).Value
+      
+            ws.Range("Q2").Value = FormatPercent(ws.Cells(j, 11).Value)
+            
+            ws.Range("P2").Value = tick
+            
+      
+          ElseIf ws.Cells(j, 11).Value = Application.WorksheetFunction.Min(ws.Range("K:K")) Then
+          
+            tick = ws.Cells(j, 9).Value
+                      
+            ws.Range("Q3").Value = FormatPercent(ws.Cells(j, 11).Value)
+            
+            ws.Range("P3").Value = tick
+          
+          ElseIf ws.Cells(j, 12).Value = Application.WorksheetFunction.Max(ws.Range("L:L")) Then
+          
+            tick = ws.Cells(j, 9).Value
+        
+            ws.Range("Q4").Value = ws.Cells(j, 12).Value
+            
+            ws.Range("P4").Value = tick
+            
+            End If
+            
+      Next j
+            
+              
+  Next
+  
+            
+    
+  
+  
+
+
+End Sub
+
+
